@@ -39,7 +39,7 @@ function saidaArquivo(data, palavra) {
 }
 
 const fs = require('fs');
-const nomeArquivo = "./encode-1";   // Faça de 'encode-n' manualmente (1 até 4), de acordo com os arquivos existentes
+const nomeArquivo = "./encode-1";   // Faça a alteração de n 'encode-n' manualmente (1 até 4), de acordo com os arquivos existentes no diretório
 var txt = "";
 var m = [];
 var txtAux = [];
