@@ -15,10 +15,10 @@ function rotacionarPalavra(palavra) {
 
     // Criando o valor que será atribuído a saída do arquivo. "txtAux[i].charAt(palavra.length - 1)" está 'simulando' a última coluna de cada linha
     for (var i = 0; i < palavra.length; i++) { data += txtAux[i].charAt(palavra.length - 1); }
-    rotacionarPalavraPalavra(palavra, data);
+    codificarPalavra(palavra, data);
 }
 
-function rotacionarPalavraPalavra(palavra, data) {
+function codificarPalavra(palavra, data) {
 
     // Ciando uma RE para identificar o valor obtido na entrada "./encode-n" e poder salvar o valor codificado
     var re = new RegExp(palavra, "g");
