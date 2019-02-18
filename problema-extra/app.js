@@ -1,5 +1,7 @@
 // Identificando o tipo de fórmula
 function separarFormula() {
+    let multi = 1;
+    let elemento = "";
 
     if (!formula) return;
 
@@ -7,82 +9,67 @@ function separarFormula() {
         console.log("if com ( )");
         elemento = /\(.*\)\d+?/.exec(formula).toString();                                       // Definindo o elemento
         multi = (/\)\d+/.test(formula)) ? /\)\d+/.exec(formula).toString().substring(1) : "1";  // Multiplicador
-
         formula = formula.replace(elemento, "");                                                // Removendo o elemento da fórmula
         elemento = elemento.substring(1, elemento.indexOf(/\)/.exec(elemento).toString()));     // Retirando caracteres especiais do elemento
-        multi = Number(multi);                                                                  // Tratando o dado para ser alocado como number
 
-        tratarFormula(elemento, multi);
-    }
-
-    if (/\[.*\]/.test(formula)) {                               // Método não testado
+    } else if (/\[.*\]/.test(formula)) {
         console.log("if com [ ]");
-        formula = /\[.*\]/.exec(formula).toString();
+        elemento = /\[.*\]\d+?/.exec(formula).toString();
         multi = (/\]\d+/.test(formula)) ? /\]\d+/.exec(formula).toString().substring(1) : "1";
+        formula = formula.replace(elemento, "");
+        elemento = elemento.substring(1, elemento.indexOf(/\]/.exec(elemento).toString()));
 
-        elemento = formula.replace(formula, "");
-        formula = formula.substring(1, formula.length - 1);
-        multi = Number(multi);
-
-        tratarFormula(formula, multi);
-    }
-
-    if (/\{.*\}/.test(formula)) {
-        console.log("if com { }");
-        formula = /\{.*\}/.exec(formula).toString();
+    } else if (/\{.*\}/.test(formula)) {
+        console.log("if com [ ]");
+        elemento = /\{.*\}\d+?/.exec(formula).toString();
         multi = (/\}\d+/.test(formula)) ? /\}\d+/.exec(formula).toString().substring(1) : "1";
+        formula = formula.replace(elemento, "");
+        elemento = elemento.substring(1, elemento.indexOf(/\}/.exec(elemento).toString()));
 
-        elemento = formula.replace(formula, "");
-        formula = formula.substring(1, formula.length - 1);
-        multi = Number(multi);
-
-        console.log("formula: " + formula + typeof formula);
-        console.log("multiplicador: " + multi + typeof multi);
-        tratarFormula(formula, multi);
-    }
-
-    if (/^[\w]+/.test(formula)) {
+    } else if (/^[\w]+/.test(formula)) {
         console.log("if sem c. especial");
         elemento = /.*/.exec(formula).toString();
-
         formula = formula.replace(elemento, "");
-        tratarFormula(elemento, "1");
     }
 
-
-    //TODO: implementar/alterar tratamentos para fórmulas como Mg(OH)2
-
-
-    separarFormula(elemento);
+    multi = Number(multi);              // Tratando o dado para ser alocado como number
+    tratarFormula(elemento, multi);
+    separarFormula();
 }
 
 // Organização e contagem dos valores
 function tratarFormula(par, multiplicador) {
-    var str = par;
-    var num = multiplicador;
+    let str = par;
+    let num = multiplicador;
 
     do {
-        if (/[\w]+\d/.test(str)) {
-            console.log("if 2");
+        if (/[\w]+/.test(str)) {
 
-            // Verificar como irá ficar quando ocorrer mais de 2 números em caps
+            // Sequência Ab
+            if (/^[A-Z][a-z]/.test(str)) {
+                if (/^[A-Z][a-z]\d/.test(str)) {
+                    console.log("if 1.1");
+                    x[count++] = [/\D+/.exec(str).toString(), Number(/\d+/.exec(str).toString() * multiplicador)];
+                    str = str.slice(/\D+\d+/.exec(str).toString().length);
+                } else if (/^[A-Z][a-z]/.test(str)) {
+                    console.log("if 1.2");
+                    x[count++] = [/\D+/.exec(str).toString(), 1 * multiplicador];
+                    str = str.slice(/\D+/.exec(str).toString().length);
+                }
+            }
 
-            if (/^[A-Z][A-Z]/.test(str)) {  // if não testado
-                console.log("if 2.1");
-                x[count++] = [/^[A-Z]/.exec(str), 1];
-                x[count++] = [/\D\d/.exec(str), /\d+/.exec(str) * num];
-                str = str.slice(2);                                         // Corrigir o slice
-            }
-            if (/^[A-Z][a-z]/.test(str)) {  // if não testado
-                console.log("if 2.2");
-                x[count++] = [/^\D+/.exec(str), /\d+/.exec(str) * num];
-                str = str.slice(1);                                         // Corrigir o slice
-            }
+            // Sequência AB
             if (/^[A-Z]/.test(str)) {
-                console.log("if 2.3");
-                x[count++] = [/^[A-Z]/.exec(str), /\d+/.exec(str) * num];
-                str = str.slice(/\D+\d+/.exec(str).toString().length);
-            } else throw "Erro no bloco tratarFormula()";
+                if (/^[A-Z]\d/.test(str)) {
+                    console.log("if 2.1");
+                    x[count++] = [/\D/.exec(str).toString(), Number(/\d+/.exec(str).toString() * multiplicador)];
+                    str = str.slice(/\D\d+/.exec(str).toString().length);
+                } else if (/^[A-Z]/.test(str)) {
+                    console.log("if 2.2");
+                    x[count++] = [/\D/.exec(str).toString(), 1 * multiplicador];
+                    str = str.slice(/\D/.exec(str).toString().length);
+                }
+            }
         }
         console.log("<< while >>");
     } while (str);
@@ -96,10 +83,8 @@ const fs = require('fs');
 
 // Manipulação e separação do arquivo de entrada para gerar a saída
 var count = 0;
-var x = [];
-var formula = "Mg(OH)2";
-var elemento = "";
-var multi = 1;
+var x = [];                         //+ K4[ON(SO3)2]2, (C5H5)Fe(CO)2CH3, Pd[P(C6H5)3]4, {[Co(NH3)4(OH)2]3Co}(SO4)3, + C2H2(COOH)2, As2{Be4C5[BCo3(CO2)3]2}4Cu5 
+var formula = "";                   //C6H12O6, H2O, Mg(OH)2, Mo(CO)6, Fe(C5H5)2
 
 try {
     //formula = fs.readFileSync(arquivo + ".txt", "UTF-8");
