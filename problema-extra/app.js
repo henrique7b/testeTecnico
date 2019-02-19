@@ -5,16 +5,16 @@ function separarFormula() {
 
     if (!formula) return;
 
-    if (/\(.*\)/.test(formula)) {
+    if (/\(.*\)/.test(formula)) {                                                                   // Verifica se a sequência contém ( )
         if (/\(\w+\)\d+/.test(formula)) {
-            elemento = /\(\w+\)\d+/.exec(formula).toString();                                       // Definindo o elemento
+            elemento = /\(\w+\)\d+/.exec(formula).toString();                                       // Verifica se o elemento tem multiplicador
             multi = (/\)\d+/.test(formula)) ? /\)\d+/.exec(formula).toString().substring(1) : "1";  // Multiplicador
         } else elemento = /\(\w+\)/.exec(formula).toString();                                       // Definindo o elemento
 
-        formula = formula.replace(elemento, "");                                                // Removendo o elemento da fórmula
-        elemento = elemento.substring(1, elemento.indexOf(/\)/.exec(elemento).toString()));     // Retirando caracteres especiais do elemento
+        formula = formula.replace(elemento, "");                                                    // Removendo o elemento da fórmula
+        elemento = elemento.substring(1, elemento.indexOf(/\)/.exec(elemento).toString()));         // Retirando caracteres especiais do elemento
 
-    } else if (/\[.*\]/.test(formula)) {
+    } else if (/\[.*\]/.test(formula)) {                                                            // Verifica se a sequência contém [ ]
         if (/\[\w+\]\d+/.test(formula)) {
             elemento = /\[\w+\]\d+/.exec(formula).toString();
             multi = (/\]\d+/.test(formula)) ? /\]\d+/.exec(formula).toString().substring(1) : "1";
@@ -23,9 +23,11 @@ function separarFormula() {
         formula = formula.replace(elemento, "");
         elemento = elemento.substring(1, elemento.indexOf(/\]/.exec(elemento).toString()));
 
-    } else if (/\{.*\}/.test(formula)) {
-        elemento = /\{.*\}\d+?/.exec(formula).toString();
-        multi = (/\}\d+/.test(formula)) ? /\}\d+/.exec(formula).toString().substring(1) : "1";
+    } else if (/\{.*\}/.test(formula)) {                                                            // Verifica se a sequência contém { }
+        if (/\{\w+\}\d+/.test(formula)) {
+            elemento = /\{\w+\}\d+/.exec(formula).toString();
+            multi = (/\}\d+/.test(formula)) ? /\}\d+/.exec(formula).toString().substring(1) : "1";
+        } else elemento = /\{\w+\}/.exec(formula).toString();
 
         formula = formula.replace(elemento, "");
         elemento = elemento.substring(1, elemento.indexOf(/\}/.exec(elemento).toString()));
@@ -35,7 +37,6 @@ function separarFormula() {
         formula = formula.replace(elemento, "");
     }
 
-    multi = Number(multi);              // Tratando o dado para ser alocado como number
     tratarFormula(elemento, multi);
     separarFormula();
 }
@@ -47,27 +48,26 @@ function tratarFormula(par, multiplicador) {
     do {
         if (/[\w]+/.test(str)) {
 
-            // Sequência Ab
+            // Captura e armazena elementos Ab
             if (/^[A-Z][a-z]/.test(str)) {
-                if (/^[A-Z][a-z]\d/.test(str)) {
-                    x[count++] = [/\D+/.exec(str).toString(), Number(/\d+/.exec(str).toString() * multiplicador)];
+                if (/^[A-Z][a-z]\d/.test(str)) {                                                                    // Verifica se o elemento tem número
+                    x[count++] = [/\D+/.exec(str).toString(), Number(/\d+/.exec(str).toString() * multiplicador)];  // Caso o o elemento tenha número, ele será multiplicado
                     str = str.slice(/\D+\d+/.exec(str).toString().length);
-                } else if (/^[A-Z][a-z]/.test(str)) {
-                    x[count++] = [/^[A-Z][a-z]/.exec(str).toString(), 1 * multiplicador];
-                    str = str.slice(/^[A-Z][a-z]/.exec(str).toString().length);
+                } else if (/^[A-Z][a-z]/.test(str)) {                                                               // Verifica se o elemento NÃO tem número
+                    x[count++] = [/^[A-Z][a-z]/.exec(str).toString(), 1 * multiplicador];                           // O multiplicador padrão será 1
+                    str = str.slice(/^[A-Z][a-z]/.exec(str).toString().length);                                     // Remove o elemento processado da fórmula temporária (str)
                 }
-            }
-
-            // Sequência AB
-            if (/^[A-Z]/.test(str)) {
-                if (/^[A-Z]\d/.test(str)) {
-                    x[count++] = [/\D/.exec(str).toString(), Number(/\d+/.exec(str).toString() * multiplicador)];
-                    str = str.slice(/\D\d+/.exec(str).toString().length);
-                } else if (/^[A-Z]/.test(str)) {
-                    x[count++] = [/\D/.exec(str).toString(), 1 * multiplicador];
-                    str = str.slice(/\D/.exec(str).toString().length);
+            } else
+                // Captura e armazena elementos A
+                if (/^[A-Z]/.test(str)) {
+                    if (/^[A-Z]\d/.test(str)) {
+                        x[count++] = [/\D/.exec(str).toString(), Number(/\d+/.exec(str).toString() * multiplicador)];
+                        str = str.slice(/\D\d+/.exec(str).toString().length);
+                    } else if (/^[A-Z]/.test(str)) {
+                        x[count++] = [/\D/.exec(str).toString(), 1 * multiplicador];
+                        str = str.slice(/\D/.exec(str).toString().length);
+                    }
                 }
-            }
         }
         somarElementos(multiplicador);
     } while (str);
@@ -88,25 +88,33 @@ function somarElementos(multiplicador) {
     }
 }
 
-function gerarSaida(par) { }
+function gerarSaida() {
+    let straux = "";
+    for (var i = 0; i < x.length; i++) {
+        straux += x[i][0] + ": " + x[i][1] + ", ";
+    }
+    straux = straux.substring(0, straux.length - 2);
+    console.log("Saída: " + straux);
+}
 
 // Arquivo de entrada
 const fs = require('fs');
-//const arquivo = "./teste1";     // Altere o './testen' para n = '1' até '8'
+const arquivo = "./teste6";     // Altere o './testen' para n = '1' até '8'
 
 // Manipulação e separação do arquivo de entrada para gerar a saída
 var count = 0;
-var x = [];                                 //*]2 K4[ON(SO3)2]2,*]4 Pd[P(C6H5)3]4, {[Co(NH3)4(OH)2]3Co}(SO4)3, As2{Be4C5[BCo3(CO2)3]2}4Cu5 
-var formula = "{[Co(NH3)4(OH)2]3Co}(SO4)3";
-//C6H12O6, H2O, Mg(OH)2, Mo(CO)6, Fe(C5H5)2, (C5H5)Fe(CO)2CH3, C2H2(COOH)2
+var x = [];
+var formula = "";
+
+//necessário adicionar o multiplicador externo - 4,6,7,8
+//as saídas não estão sendo geradas na mesma ordem que estão os exemplos no PDF
 
 try {
-    //formula = fs.readFileSync(arquivo + ".txt", "UTF-8");
+    formula = fs.readFileSync(arquivo + ".txt", "UTF-8");
     console.log("Entrada: " + formula);
-    separarFormula();
 
-    console.log("-----");
-    for (var i = 0; i < count; i++) { console.log(x[i].toString()); }
+    separarFormula();
+    gerarSaida();
 
 } catch (err) {
     console.log(err.name);
