@@ -1,13 +1,12 @@
-
 function separarFormula(par) {
     var str = par;
-    var multiplicador = 1;
+    var multi = 1;
     var i2 = "";
     var i3 = "";
     var i4 = "";
 
     do {
-        // Idenfitica se a sequência começa com { [ ( ) ] }
+        // Idenfitica se a sequência começa com { [ (
         if (/^\W/.test(str)) {
             if (/^\{/.test(str)) {
                 i2 = "{";
@@ -18,23 +17,34 @@ function separarFormula(par) {
             } else if (/^\(/.test(str)) {
                 i4 = "(";
                 str = str.slice(1, str.length);
+
+                // Idenfitica se a sequência começa com } ] )
             } else if (/^\}/.test(str)) {
-                multiplicador = (/\}\d+?/.test(str)) ? /\d+?/.exec(str).toString() : "1";
+                multi = (/^\}\d+?/.test(str)) ? /\d+?/.exec(str).toString() : "1";
+                if (/^\}\d+/.test(str)) {
+                    multiplicarElementos("{", multi);
+                    somarElementos();
+                } else if (/^\}/.test(str)) multiplicarElementos("(", multi);
                 str = str.slice(/\}\d?/.exec(str).toString().length, str.length);
                 i2 = "";
-                somarElementos();
 
             } else if (/^\]/.test(str)) {
-                multiplicador = (/\]\d+?/.test(str)) ? /\d+?/.exec(str).toString() : "1";
+                multi = (/^\]\d+?/.test(str)) ? /\d+?/.exec(str).toString() : "1";
+                if (/^\]\d+/.test(str)) {
+                    multiplicarElementos("[", multi);
+                    somarElementos();
+                } else if (/^\]/.test(str)) multiplicarElementos("(", multi);
                 str = str.slice(/\]\d?/.exec(str).toString().length, str.length);
                 i3 = "";
-                somarElementos();
 
             } else if (/^\)/.test(str)) {
-                multiplicador = (/\)\d+?/.test(str)) ? /\d+/.exec(str).toString() : "1";
+                multi = (/^\)\d+?/.test(str)) ? /\d+/.exec(str).toString() : "1";
+                if (/^\)\d+/.test(str)) {
+                    multiplicarElementos("(", multi);
+                    somarElementos();
+                } else if (/^\)/.test(str)) multiplicarElementos("(", multi);
                 str = str.slice(/\)\d?/.exec(str).toString().length, str.length);
                 i4 = "";
-                somarElementos();
             }
 
             // Idenfitica se a sequência começa com Ab
@@ -73,8 +83,8 @@ function separarFormula(par) {
                 str = str.slice(/\D/.exec(str).toString().length, str.length);
             }
         }
-
     } while (str);
+    somarElementos();
 }
 
 function somarElementos() {
@@ -91,21 +101,38 @@ function somarElementos() {
     }
 }
 
-function multiplicarElementos(indice) {
+function multiplicarElementos(tipo, multiplicador) {
     for (var i = 0; i < x.length; i++) {
-        for (var j = 0; j < i; j++) {
+        for (var j = 2; j < 5; j++) {
+            if (x[i][j] == tipo) {
+                x[i][1] *= multiplicador;
+                x[i][j] = "";
+            }
+            if (!x[i][0]) return;
+        }
+    }
+}
 
+function gerarSaida() {
+    for (var i = 0; i < x.length; i++) {
+        if (x[i][0]) resultado += x[i][0] + ": " + x[i][1] + ", ";
+        else {
+            resultado = resultado.substring(0, resultado.length - 2);
+
+            console.log("Entrada: " + formula + " | Saída: " + resultado);
+            fs.writeFileSync(arquivo + ".out", resultado, "UTF-8");
+            return;
         }
     }
 }
 
 // Arquivo de entrada
-//const fs = require('fs');
-//const arquivo = "./teste6";     // Altere o './testen' para n = '1' até '8'
+const fs = require('fs');
+const arquivo = "./teste1";     // Altere o './testen' para n = '1' até '8'
 
 // Manipulação e separação do arquivo de entrada para gerar a saída
 var count = 0;
-var x = new Array(12);
+var x = new Array(10);
 for (var i = 0; i < x.length; i++) {
     x[i] = new Array(5);
     for (var j = 0; j < 5; j++) {
@@ -113,39 +140,13 @@ for (var i = 0; i < x.length; i++) {
     }
 }
 
-var formula = "(C5H5)Fe(CO)2CH3";
-
-// K4[ON(SO3)2]2, (C5H5)Fe(CO)2CH3, Pd[P(C6H5)3]4, {[Co(NH3)4(OH)2]3Co}(SO4)3, C2H2(COOH)2, As2{Be4C5[BCo3(CO2)3]2}4Cu5, C6H12O6, H2O, Mg(OH)2, Mo(CO)6, Fe(C5H5)2
-
-// ok
-// H2O, Mg(OH)2
-
-// Pd
-// P    [
-// C6   [(
-// H5   [(
-// if (elemento começado com "(")
-//      somar
-//      multiplicar )3
-// if (elemento começado com "[")
-//      somar
-//      multiplicar ]4
-// 
-
-
-
-// TODO: Criar multiplicador
-// TODO: Organizar elementos
-
+var formula = "";
+var resultado = "";
 
 try {
-    //formula = fs.readFileSync(arquivo + ".txt", "UTF-8");
-    console.log("Entrada: " + formula);
-
+    formula = fs.readFileSync(arquivo + ".in", "UTF-8");
     separarFormula(formula);
-    //gerarSaida();
-
-    for (var i = 0; i < x.length; i++) { console.log(x[i].toString()); }
+    gerarSaida();
 
 } catch (err) {
     console.log(err.name);
