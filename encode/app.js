@@ -1,49 +1,48 @@
-function rotacionarPalavra(palavra) {
-    var str = "";
-    var strAux = palavra;
-    var data = "";
+function rotacionarPalavra(valorRotacionar) {
+    let str = "";
+    let strAux = valorRotacionar;
+    let codificacao = "";
 
     // Rotacionando os valores e os adicionando ao array
-    for (var i = 0; i < palavra.length; i++) {
+    for (let i = 0; i < valorRotacionar.length; i++) {
         str = strAux;
-        txtAux[i] = str.charAt(str.length - 1) + str.substr(0, str.length - 1);
-        strAux = txtAux[i];
+        valoresRotacionados[i] = str.charAt(str.length - 1) + str.substr(0, str.length - 1);
+        strAux = valoresRotacionados[i];
     }
 
     // Organizando os valores do array
-    txtAux.sort();
+    valoresRotacionados.sort();
 
-    // Criando o valor que será atribuído a saída do arquivo. "txtAux[i].charAt(palavra.length - 1)" está 'simulando' a última coluna de cada linha
-    for (var i = 0; i < palavra.length; i++) { data += txtAux[i].charAt(palavra.length - 1); }
-    codificarPalavra(palavra, data);
+    // Criando o valor que será atribuído a saída do arquivo (codificacao será a palavra codificada)
+    // "txtAux[i].charAt(palavra.length - 1)" está 'simulando' a última coluna de cada linha
+    for (let i = 0; i < valorRotacionar.length; i++) {
+        codificacao += valoresRotacionados[i].charAt(valorRotacionar.length - 1);
+    }
+
+    gerarSaida(codificacao, valorRotacionar);
 }
 
-function codificarPalavra(palavra, data) {
-
+function gerarSaida(valorCodificado, valorInicial) {
     // Ciando uma RE para identificar o valor obtido na entrada "./encode-n" e poder salvar o valor codificado
-    var re = new RegExp(palavra, "g");
+    let re = new RegExp(valorInicial);
 
-    for (var i = 0; i < palavra.length; i++) {
-
-        // Criando a codificação
-        m[txtAux[i], i];
-        if (re.test(txtAux[i])) {
-            m[txtAux[i], i] = data;
-            console.log("Entrada: " + txtAux[i] + " | Saída: [\"" + m[txtAux[i], i] + "\", " + i + "]");
-            fs.writeFileSync(nomeArquivo + ".out", "[\"" + m[txtAux[i], i] + "\", " + i + "]", "UTF-8")
+    for (let i = 0; i < valorInicial.length; i++) {
+        if (re.test(valoresRotacionados[i])) {
+            console.log("Entrada: " + valoresRotacionados[i] + " | Saída: [\"" + valorCodificado + "\", " + i + "]");
+            fs.writeFileSync(nomeArquivo + ".txt", "[\"" + valorCodificado + "\", " + i + "]", "UTF-8")
         }
     }
 }
 
+// Início do código
 const fs = require('fs');
-const nomeArquivo = "./encode-4";   // Altere o './encode-n' para n = '1', '2', '3' ou '4'. './encode-1' foi utilizado apenas como testes
-var txt = "";
-var m = [];
-var txtAux = [];
+const nomeArquivo = "./encode-1";   // Altere o './encode-n' para n = '1', '2', '3' ou '4'. './encode-1' foi utilizado apenas como testes
+var valorCodificar = "";
+var valoresRotacionados = [];
 
 try {
-    txt = fs.readFileSync(nomeArquivo + ".in", 'UTF-8');
-    rotacionarPalavra(txt);
+    valorCodificar = fs.readFileSync(nomeArquivo + ".in", 'UTF-8');
+    rotacionarPalavra(valorCodificar);
 
 } catch (err) {
     console.log(err.name);
