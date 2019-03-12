@@ -23,13 +23,11 @@ function rotacionarPalavra(valorRotacionar) {
 }
 
 function gerarSaida(valorCodificado, valorInicial) {
-    // Ciando uma RE para identificar o valor obtido na entrada "./encode-n" e poder salvar o valor codificado
-    let re = new RegExp(valorInicial);
-
+    // Comparando o valor de entrada (valorInicial) com o valor armazenado no array (valoresRotacionados)
     for (let i = 0; i < valorInicial.length; i++) {
-        if (re.test(valoresRotacionados[i])) {
+        if (valorInicial == valoresRotacionados[i]) {
             console.log("Entrada: " + valoresRotacionados[i] + " | Saída: [\"" + valorCodificado + "\", " + i + "]");
-            fs.writeFileSync(nomeArquivo + ".txt", "[\"" + valorCodificado + "\", " + i + "]", "UTF-8")
+            fs.writeFileSync(nomeArquivo + ".txt", "[\"" + valorCodificado + "\", " + i + "]", "UTF-8")     // valorCodificado = texto de saída, i = índice
         }
     }
 }
