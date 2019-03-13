@@ -1,53 +1,51 @@
-function decodificar(palavra, count) {
-
-    if (count == 1) return;
+function decodificar(codigo, count) {
+    let strAux = [];
 
     // Criando a primeira coluna
-    if (!str[0]) {
-        for (var i = 0; i < palavra.length; i++) { strAux[i] = palavra.charAt(i); }
+    if (!valoresDecodificados[0]) {
+        for (let i = 0; i < codigo.length; i++) {
+            strAux[i] = codigo.charAt(i);
+        }
         strAux.sort();
-        for (var i = 0; i < palavra.length; i++) { str[i] = strAux[i].toString(); }
+        for (let i = 0; i < codigo.length; i++) {
+            valoresDecodificados[i] = strAux[i].toString();
+        }
     }
 
-    // Criando as outras colunas
-    for (var i = 0; i < palavra.length; i++) {
-        strAux[i] = palavra.charAt(i);
-        strAux[i] += str[i].toString();
+    for (let i = count; i > 1; i--) {
+        // Criando as outras colunas
+        for (let i = 0; i < codigo.length; i++) {
+            strAux[i] = codigo.charAt(i);
+            strAux[i] += valoresDecodificados[i].toString();
+        }
+        for (let i = 0; i < codigo.length; i++) {
+            valoresDecodificados[i] = strAux[i].toString();
+        }
+        for (let i = 0; i < codigo.length; i++) {
+            valoresDecodificados.sort();
+        }
     }
-    for (var i = 0; i < palavra.length; i++) { str[i] = strAux[i].toString(); }
-    for (var i = 0; i < palavra.length; i++) { str.sort(); }
-
-    contador--;
-    decodificar(palavra, contador);
 }
 
-// Variáveis para a manipulação do arquivo
+// Inicio do código
 const fs = require('fs');
 const nomeArquivo = "./decode-8";   // Altere o './decode-n' para n = '5', '6', '7' ou '8'. './decode-8' foi utilizado apenas como testes
-var txt;
+var valorCodificado;
 var indice;
-var data;
+var dados;
+var valoresDecodificados;
 
-// Preparando o arquivo para ser processado
+// Tratamento dos valores obtidos
 try {
-    data = fs.readFileSync(nomeArquivo + ".in", "UTF-8");
-    txt = data.slice(data.indexOf("['") + 2, data.indexOf("',"));
-    indice = Number(data.slice(data.indexOf(", ") + 2, data.indexOf("]")));
-
-} catch (err) {
-    console.log(err.name);
-    console.log(err.message);
-}
-
-// Variáveis para a decodificação da palavra
-var str = new Array(txt.length);
-var strAux = [];
-var contador = txt.length;
-
-try {
-    decodificar(txt, contador);
-    fs.writeFileSync(nomeArquivo + ".out", str[indice], "UTF-8");
-    console.log("Entrada: " + data + " | Saída: " + str[indice]);
+    dados = fs.readFileSync(nomeArquivo + ".in", "UTF-8");
+    valorCodificado = dados.slice(dados.indexOf("['") + 2, dados.indexOf("',"));
+    indice = Number(dados.slice(dados.indexOf(", ") + 2, dados.indexOf("]")));
+    // Decodificação dos valores
+    valoresDecodificados = new Array(valorCodificado.length);
+    decodificar(valorCodificado, valorCodificado.length);
+    // Gerando a saída
+    console.log("Entrada: " + dados + " | Saída: " + valoresDecodificados[indice]);
+    fs.writeFileSync(nomeArquivo + ".out", valoresDecodificados[indice], "UTF-8");
 
 } catch (err) {
     console.log(err.name);
