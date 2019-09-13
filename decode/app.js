@@ -12,6 +12,7 @@ const decode = (code) => {
             _aux.push(value)
         }
         _aux.sort()
+        
         valueDecoded = _aux.map((value) =>
             value.toString())
     }
@@ -23,6 +24,7 @@ const decode = (code) => {
         }
         valueDecoded = _aux.map((value) =>
             value.toString())
+
         valueDecoded.forEach(() => {
             valueDecoded.sort()
         })
