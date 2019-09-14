@@ -16,13 +16,13 @@ const rotateValue = (decodedValue) => {
     valueRotated.sort()
 }
 
-const codify = (valueDecoded) => {
+const codify = () => {
     let codifyed = ""
 
     // Criando o valor que será a saída
-    // 'valueRotated[i].charAt(valueDecoded.length - 1)' está 'simulando' a última coluna de cada linha
-    for (let i = 0; i < valueDecoded.length; i++) {
-        codifyed += valueRotated[i].charAt(valueDecoded.length - 1)
+    // 'value.charAt(value.length - 1)' está 'simulando' a última coluna de cada linha
+    for (value of valueRotated) {
+        codifyed += value.charAt(value.length - 1)
     }
     return codifyed
 }
@@ -40,7 +40,7 @@ try {
         let valueDecoded = fs.readFileSync(__dirname + file + '.in', 'UTF-8')
 
         rotateValue(valueDecoded)
-        let valueCoded = codify(valueDecoded)
+        let valueCoded = codify()
         let index = findIndex(valueDecoded)
 
         console.log(`Entrada: ${valueRotated[index]}\nSaída: [\"${valueCoded}\", ${index}]\n`)
