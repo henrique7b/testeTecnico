@@ -1,29 +1,26 @@
 const fs = require('fs')
 
 'use strict'
-let valueDecoded
+let valueDecoded = []
 
-const decode = (code) => {
+const decode = (codedValue) => {
     let _aux = []
 
     // Criando a primeira coluna
     if (!valueDecoded[0]) {
-        for (let value of code) {
+        for (let value of codedValue) {
             _aux.push(value)
         }
         _aux.sort()
-        
-        valueDecoded = _aux.map((value) =>
-            value.toString())
-    }
 
+        valueDecoded = _aux.map((value) => value.toString())
+    }
     // Criando as outras colunas
-    for (let i = code.length; i > 1; i--) {
-        for (let i = 0; i < code.length; i++) {
-            _aux[i] = code.charAt(i) + valueDecoded[i].toString()
+    for (let i = codedValue.length; i > 1; i--) {
+        for (let i = 0; i < codedValue.length; i++) {
+            _aux[i] = codedValue.charAt(i) + valueDecoded[i].toString()
         }
-        valueDecoded = _aux.map((value) =>
-            value.toString())
+        valueDecoded = _aux.map((value) => value.toString())
 
         valueDecoded.forEach(() => {
             valueDecoded.sort()

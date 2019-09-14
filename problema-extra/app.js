@@ -1,3 +1,10 @@
+//
+// ATENÇÃO ATENÇÃO ATENÇÃO
+// Esse APP está extremamente mal feito, mal otimizado e não funciona em todos os casos
+// Ele foi feito de forma rápida e sem planejamento, e não foi reformulado
+//
+
+
 function separarFormula(par) {
     var str = par;
     var multi = 1;
@@ -120,7 +127,7 @@ function gerarSaida() {
             resultado = resultado.substring(0, resultado.length - 2);
 
             console.log("Entrada: " + formula + " | Saída: " + resultado);
-            fs.writeFileSync(arquivo + ".out", resultado, "UTF-8");
+            // fs.writeFileSync(arquivo + ".out", resultado, "UTF-8");
             return;
         }
     }
@@ -128,7 +135,7 @@ function gerarSaida() {
 
 // Arquivo de entrada
 const fs = require('fs');
-const arquivo = "./teste1";     // Altere o './testen' para n = '1' até '8'
+const arquivo = "\\teste2";     // Altere o './testen' para n = '1' até '8'
 
 // Manipulação e separação do arquivo de entrada para gerar a saída
 var count = 0;
@@ -144,7 +151,7 @@ var formula = "";
 var resultado = "";
 
 try {
-    formula = fs.readFileSync(arquivo + ".in", "UTF-8");
+    formula = fs.readFileSync(__dirname + arquivo + ".in", "UTF-8");
     separarFormula(formula);
     gerarSaida();
 
